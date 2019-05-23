@@ -175,3 +175,7 @@ tags
 [._]*.un~
 
 # End of https://www.gitignore.io/api/vim,java,macos,maven,intellij+all
+
+LICENSE.md
+/.github
+Jenkinsfile
