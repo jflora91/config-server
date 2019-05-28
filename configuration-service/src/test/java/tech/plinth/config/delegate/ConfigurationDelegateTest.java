@@ -205,8 +205,12 @@ public class ConfigurationDelegateTest {
 
     @Test
     public void getVersionNotFoundTest() throws JsonPatchException {
-        configurationDelegate.getVersion(configurationVersion);
+        when(configurationRepository.findByPlatformAndVersion(configurationPlatform, configurationVersion)).thenReturn(Optional.empty());
 
-        configurationRepository.findByPlatformAndVersion(configurationPlatform, configurationVersion);
+        try{
+            configurationDelegate.getVersion(configurationVersion);
+        } catch (Exception ex) {
+            assertEquals(((ResponseStatusException) ex).getStatus(), NOT_FOUND);
+        }
     }
 }
