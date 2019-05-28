@@ -23,6 +23,7 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 @EnableAutoConfiguration(exclude = FlywayAutoConfiguration.class)
@@ -191,5 +192,21 @@ public class ConfigurationDelegateTest {
         } catch (Exception ex) {
             assertEquals(((ResponseStatusException) ex).getStatus(), NOT_FOUND);
         }
+    }
+
+    @Test
+    public void getVersionWithNullTest() throws JsonPatchException {
+        try {
+            configurationDelegate.getVersion(null);
+        } catch (Exception ex) {
+            assertEquals(((ResponseStatusException) ex).getStatus(), BAD_REQUEST);
+        }
+    }
+
+    @Test
+    public void getVersionNotFoundTest() throws JsonPatchException {
+        configurationDelegate.getVersion(configurationVersion);
+
+        configurationRepository.findByPlatformAndVersion(configurationPlatform, configurationVersion);
     }
 }

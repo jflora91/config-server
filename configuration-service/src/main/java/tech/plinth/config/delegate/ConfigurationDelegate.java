@@ -61,23 +61,51 @@ public class ConfigurationDelegate {
      * return last version merged with base configuration from that platform
      */
     public JsonNode getLastVersion() throws JsonPatchException {
-
-        JsonNode jsonVersionData = configurationRepository.findTopByPlatformOrderByVersionDesc(requestContext.getPlatformId())
+        JsonNode jsonNodeVersion = configurationRepository.findTopByPlatformOrderByVersionDesc(requestContext.getPlatformId())
                 .orElseThrow(() -> {
                     logger.error("Platform:{} RequestId:{} Message: No configuration defined to this platform",
                             requestContext.getPlatformId(), requestContext.getRequestId());
                     throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No configuration defined to this platform");
                 }).getDataJson();
 
-        JsonNode jsonBaseData = baseRepository.findTopByOrderByVersionDesc().orElseThrow(() -> {
+        return mergeConfigurationWithBase(jsonNodeVersion);
+    }
+
+    /**
+     * return specific version merged with base configuration from that platform
+     */
+    public JsonNode getVersion(Long version) throws JsonPatchException {
+        if (version == null) {
+            logger.error("Platform:{} RequestId:{} Message: Version not specified",
+                    requestContext.getPlatformId(), requestContext.getRequestId());
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Version not specified");
+        }
+
+        JsonNode jsonNodeVersion = configurationRepository.findByPlatformAndVersion(requestContext.getPlatformId(), version)
+                .orElseThrow(() -> {
+                    logger.error("Platform:{} RequestId:{} Message: Configuration to this version not found",
+                            requestContext.getPlatformId(), requestContext.getRequestId());
+                    throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Configuration to this version not found");
+                }).getDataJson();
+
+
+        return mergeConfigurationWithBase(jsonNodeVersion);
+    }
+
+    /**
+     * merge the configuration version coming in parameter with base configuration and return it
+     */
+    public JsonNode mergeConfigurationWithBase(JsonNode jsonNodeVersion) throws JsonPatchException {
+        JsonNode jsonNodeBase = baseRepository.findTopByOrderByVersionDesc().orElseThrow(() -> {
             logger.error("Platform:{} RequestId:{} Message: No Base configuration found");
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No Base configuration found");
         }).getDataJson();
 
-        JsonMergePatch patch = JsonMergePatch.fromJson(jsonVersionData);
+        JsonMergePatch patch = JsonMergePatch.fromJson(jsonNodeVersion);
 
-        JsonNode jsonMerged = patch.apply(jsonBaseData);
+        JsonNode jsonMerged = patch.apply(jsonNodeBase);
 
         return jsonMerged;
     }
+
 }

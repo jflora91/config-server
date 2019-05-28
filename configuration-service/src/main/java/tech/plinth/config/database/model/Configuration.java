@@ -78,7 +78,7 @@ public class Configuration {
     }
 
     public Long getVersion() {
-        return version;
+        return this.version;
     }
 
     public void setVersion(Long version) {
