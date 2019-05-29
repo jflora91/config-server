@@ -1,11 +1,17 @@
 package tech.plinth.config.delegate;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.github.fge.jsonpatch.JsonPatchException;
+import com.github.fge.jsonpatch.mergepatch.JsonMergePatch;
+import org.apache.logging.log4j.util.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
+import org.springframework.web.server.ResponseStatusException;
 import tech.plinth.config.database.model.Configuration;
+import tech.plinth.config.database.repository.BaseRepository;
 import tech.plinth.config.database.repository.ConfigurationRepository;
 import tech.plinth.config.interceptor.model.RequestContext;
 
@@ -18,6 +24,9 @@ public class ConfigurationDelegate {
 
     @Autowired
     private ConfigurationRepository configurationRepository;
+
+    @Autowired
+    private BaseRepository baseRepository;
 
     @Resource
     private RequestContext requestContext;
@@ -46,6 +55,44 @@ public class ConfigurationDelegate {
                         .version(0L)
                         .build())
                 .getVersion() + 1L;
+    }
+
+    /**
+     * get a scope from last version
+     */
+    public JsonNode getScope(String scope) throws JsonPatchException {
+        if (Strings.isBlank(scope)) {
+            logger.error("PlatformId:{} RequestId:'' Message: No scope defined",
+                    requestContext.getPlatformId(), requestContext.getRequestId());
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+        }
+
+        JsonNode jsonNode = getLastVersion();
+        return jsonNode.get(scope);
+    }
+
+    /**
+     * return last version merged with base configuration from that platform
+     */
+    public JsonNode getLastVersion() throws JsonPatchException {
+
+        JsonNode jsonVersionData = configurationRepository.findTopByPlatformOrderByVersionDesc(requestContext.getPlatformId())
+                .orElseThrow(() -> {
+                    logger.error("Platform:{} RequestId:{} Message: No configuration defined to this platform",
+                            requestContext.getPlatformId(), requestContext.getRequestId());
+                    throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No configuration defined to this platform");
+                }).getDataJson();
+
+        JsonNode jsonBaseData = baseRepository.findTopByOrderByVersionDesc().orElseThrow(() -> {
+            logger.error("Platform:{} RequestId:{} Message: No Base configuration found");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No Base configuration found");
+        }).getDataJson();
+
+        JsonMergePatch patch = JsonMergePatch.fromJson(jsonVersionData);
+
+        JsonNode jsonMerged = patch.apply(jsonBaseData);
+
+        return jsonMerged;
     }
 
 }

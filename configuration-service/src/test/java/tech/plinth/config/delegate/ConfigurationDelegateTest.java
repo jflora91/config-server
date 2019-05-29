@@ -10,10 +10,13 @@ import org.mockito.Mock;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.flyway.FlywayAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.server.ResponseStatusException;
 import tech.plinth.config.database.repository.BaseRepository;
 import tech.plinth.config.database.repository.ConfigurationRepository;
 import tech.plinth.config.interceptor.model.RequestContext;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
 @EnableAutoConfiguration(exclude = FlywayAutoConfiguration.class)
@@ -51,10 +54,15 @@ public class ConfigurationDelegateTest {
         when(requestContext.getPlatformId()).thenReturn(configurationPlatform);
 
     }
+
+    @Test
+    public void getScopeTest() throws JsonPatchException {
+        String scope = "config1";
+        try {
+            configurationDelegate.getScope("");
+        } catch (ResponseStatusException ex) {
+            assertEquals(ex.getStatus(), HttpStatus.BAD_REQUEST);
+        }
+    }
 }
-//todo tests
-//    @Test
-//    public void getVersionWithNullTest() throws JsonPatchException {
-//
-//    }
 

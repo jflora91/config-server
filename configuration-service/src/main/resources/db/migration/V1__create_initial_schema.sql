@@ -17,3 +17,39 @@ create table base
     version       bigint       not null,
     primary key (id)
 );
+
+
+insert into base (data_json, version)
+values(
+          '{
+            "config1": "config1",
+            "config2": "config2",
+            "config3": {
+              "config31": [{"config311":"new config3.1.1"}],
+              "config32": "config3.2"
+            }
+          }',
+          1
+      );
+
+insert into config (data_json, platform, version)
+values (
+        '{
+            "config3": {
+                "config31": "config3.1",
+                "config32": "config3.2"
+            }
+        }',
+        'plinth',
+        2
+);
+
+insert into config (data_json, platform, version)
+values (
+           '{
+             "config1": "1config",
+             "config2": "2config"
+           }',
+           'plinth',
+           1
+       );
