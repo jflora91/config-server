@@ -213,4 +213,21 @@ public class ConfigurationDelegateTest {
             assertEquals(((ResponseStatusException) ex).getStatus(), NOT_FOUND);
         }
     }
+
+    @Test
+    public void getVersionTest() throws JsonPatchException, IOException {
+
+        baseJsonNode = mapper.readTree("{\"config1\":\"config1\"}");
+        configurationJsonNode = mapper.readTree("{\"config1\":\"config2\"}");
+
+        Base base = new Base(baseVersion, baseJsonNode);
+        Configuration configuration = new Configuration(configurationPlatform, configurationJsonNode, configurationVersion);
+
+        when(configurationRepository.findByPlatformAndVersion(configurationPlatform, configurationVersion)).thenReturn(Optional.of(configuration));
+        when(baseRepository.findTopByOrderByVersionDesc()).thenReturn(Optional.of(base));
+
+        assertEquals(configurationDelegate.getVersion(configurationVersion), configuration.getDataJson());
+
+    }
+
 }

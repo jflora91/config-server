@@ -45,7 +45,6 @@ public class ConfigurationDelegate {
     }
 
     /**
-     * ®
      * define and return the next version number to be created
      * find the max version number in DB and the next version will be the that version number + 1
      */
@@ -87,7 +86,6 @@ public class ConfigurationDelegate {
                             requestContext.getPlatformId(), requestContext.getRequestId());
                     throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Configuration to this version not found");
                 }).getDataJson();
-
 
         return mergeConfigurationWithBase(jsonNodeVersion);
     }
