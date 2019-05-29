@@ -10,20 +10,11 @@ import org.mockito.Mock;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.flyway.FlywayAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.web.server.ResponseStatusException;
-import tech.plinth.config.database.model.Base;
-import tech.plinth.config.database.model.Configuration;
 import tech.plinth.config.database.repository.BaseRepository;
 import tech.plinth.config.database.repository.ConfigurationRepository;
 import tech.plinth.config.interceptor.model.RequestContext;
 
-import java.io.IOException;
-import java.util.Optional;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
-import static org.springframework.http.HttpStatus.BAD_REQUEST;
-import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 @EnableAutoConfiguration(exclude = FlywayAutoConfiguration.class)
 @SpringBootTest
@@ -60,9 +51,10 @@ public class ConfigurationDelegateTest {
         when(requestContext.getPlatformId()).thenReturn(configurationPlatform);
 
     }
-
-    @Test
-    public void getVersionWithNullTest() throws JsonPatchException {
-
-    }
+}
+//todo tests
+//    @Test
+//    public void getVersionWithNullTest() throws JsonPatchException {
+//
+//    }
 

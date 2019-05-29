@@ -39,18 +39,29 @@
                 <artifactId>hibernate-types-52</artifactId>
                 <version>2.4.3</version>
             </dependency>
-        </dependencies>
-    </dependencyManagement>
+            <dependency>
+                <groupId>com.github.fge</groupId>
+                <artifactId>json-patch</artifactId>
+                <version>1.6</version>
+            </dependency>
+            <dependency>
+                <groupId>org.junit.jupiter</groupId>
+                <artifactId>junit-jupiter</artifactId>
+                <version>5.5.0-M1</version>
+                <scope>test</scope>
+            </dependency>
+    </dependencies>
+</dependencyManagement>
 
-    <build>
-        <pluginManagement>
-            <plugins>
-                <plugin>
-                    <artifactId>maven-compiler-plugin</artifactId>
-                    <version>3.8.1</version>
-                </plugin>
-            </plugins>
-        </pluginManagement>
-    </build>
+<build>
+<pluginManagement>
+    <plugins>
+        <plugin>
+            <artifactId>maven-compiler-plugin</artifactId>
+            <version>3.8.1</version>
+        </plugin>
+    </plugins>
+</pluginManagement>
+</build>
 
-</project>
+        </project>
