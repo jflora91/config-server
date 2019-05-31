@@ -26,11 +26,10 @@ public class BaseDelegate {
      * if exist, return the newest Base configuration
      */
     public JsonNode getBase() {
-        logger.debug("PlatformId:{} RequestId:{} Message: Get the Base configuration",
-                requestContext.getPlatformId(), requestContext.getRequestId());
-
         return baseRepository.findTopByOrderByVersionDesc().orElseThrow(() -> {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+            logger.error("PlatformId:{} RequestId:{} Message: Base configuration not found",
+                    requestContext.getPlatformId(), requestContext.getRequestId());
+            return new ResponseStatusException(HttpStatus.NOT_FOUND);
         }).getDataJson();
     }
 }
