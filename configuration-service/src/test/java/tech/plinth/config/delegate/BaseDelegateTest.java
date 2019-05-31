@@ -10,7 +10,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.web.server.ResponseStatusException;
 import tech.plinth.config.database.model.Base;
 import tech.plinth.config.database.repository.BaseRepository;
-import tech.plinth.config.interceptor.model.RequestContext;
 
 import java.io.IOException;
 import java.util.Optional;
@@ -25,9 +24,6 @@ public class BaseDelegateTest {
 
     @Mock
     private BaseRepository baseRepository;
-
-    @Mock
-    private RequestContext requestContext;
 
     @InjectMocks
     private BaseDelegate baseDelegate;
