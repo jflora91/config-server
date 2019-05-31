@@ -21,7 +21,7 @@ public class Base {
     @Column(name = "id", updatable = false)
     private Long id;
 
-    @NotNull(message = "Version needed to be defined")
+    @NotNull(message = "Version need to be defined")
     @Column(name = "version")
     private Long version;
 
@@ -33,8 +33,7 @@ public class Base {
     @Column(name = "creation_date", updatable = false)
     private OffsetDateTime creationDate;
 
-    public Base() {
-    }
+    public Base() {}
 
     public Base(Long version, JsonNode dataJson) {
         this.version = version;
