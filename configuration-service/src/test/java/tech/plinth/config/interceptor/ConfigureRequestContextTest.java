@@ -13,7 +13,10 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import tech.plinth.config.interceptor.model.RequestContext;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.when;
+import static tech.plinth.config.interceptor.ConfigureRequestContext.HEADER_PLATFORM_ID;
 
 @ExtendWith(SpringExtension.class)
 @EnableAutoConfiguration(exclude = FlywayAutoConfiguration.class)
@@ -22,19 +25,29 @@ public class ConfigureRequestContextTest {
 
     @Mock
     RequestContext requestContext;
-    private MockHttpServletRequest request = new MockHttpServletRequest();
-    private MockHttpServletResponse response = new MockHttpServletResponse();
+
+    @Mock
+    MockHttpServletRequest request;
+
+    @Mock
+    MockHttpServletResponse response;
+
     @InjectMocks
     private ConfigureRequestContext configureRequestContext;
 
     @BeforeEach
     public void setUp() {
-//         when(request.getHeader(HEADER_PLATFORM_ID)).thenReturn(null);
     }
 
     @Test
-    public void preHandleTest() {
+    public void preHandleNullPlatformIdTest() throws Exception {
+        when(request.getHeader(HEADER_PLATFORM_ID)).thenReturn(null);
+        assertFalse(configureRequestContext.preHandle(request, response, null));
+    }
 
-        assertEquals(requestContext.getPlatformId(), null);
+    @Test
+    public void preHandleTest() throws Exception {
+        when(request.getHeader(HEADER_PLATFORM_ID)).thenReturn("google.com");
+        assertTrue(configureRequestContext.preHandle(request, response, null));
     }
 }
